@@ -7,14 +7,13 @@ Package.describe({
 
 Package.onUse(function(api) {
   Npm.depends({
-    '@urbanetic/utility': '0.0.6'
+    '@urbanetic/utility': '0.0.7'
   });
   api.versionsFrom('METEOR@0.9.0');
   api.use([
     'coffeescript',
     'underscore',
     'minimongo',
-    // 'stevezhu:lodash@0.2.0',
     'aramk:q@1.0.1_1',
     'aramk:tinycolor@1.1.0_1',
   ], ['client', 'server']);
@@ -29,13 +28,11 @@ Package.onUse(function(api) {
   api.use(['cosmos:browserify@0.5.0']);
   api.addFiles(['src/lib.browserify.js']);
 
-  // NOTE: Using a custom fork:
-  // https://github.com/aramk/meteor-collection-hooks.git#feature/exceptions
   api.use([
     'aldeed:autoform@5.1.2',
     'momentjs:moment@2.10.3',
     'matb33:collection-hooks@0.8.0',
-    'semantic:ui-css@1.11.5',
+    'semantic:ui-css@2.0.8',
     'session@1.1.0',
     'reactive-var@1.0.5'
   ], 'client', {weak: true});
@@ -52,8 +49,6 @@ Package.onUse(function(api) {
   // Make these available to the app to allow working with tiem and deferreds.
   api.imply(['momentjs:moment', 'aramk:q'], ['client','server'])
   api.export([
-    // 'Arrays',
-    // 'Booleans',
     'Collections',
     'Colors',
     'Dates',
@@ -62,16 +57,7 @@ Package.onUse(function(api) {
     'DeferredQueueMap',
     'Depends',
     'Environment',
-    // 'Functions',
-    // 'Logger',
-    // 'Maths',
-    // 'Numbers',
-    // 'Objects',
-    // 'Paths',
-    'Promises',
-    // 'Setter',
-    // 'Strings',
-    // 'Types'
+    'Promises'
   ], ['client', 'server']);
   api.export([
     'Buffers'
@@ -79,12 +65,9 @@ Package.onUse(function(api) {
   api.export([
     'Blobs',
     'Forms',
-    'Templates',
-    // 'Window'
+    'Templates'
   ], 'client');
   api.addFiles([
-    // 'src/Arrays.coffee',
-    // 'src/Booleans.coffee',
     'src/Collections.coffee',
     'src/Colors.coffee',
     'src/data/DeferredQueue.coffee',
@@ -93,22 +76,12 @@ Package.onUse(function(api) {
     'src/Dates.coffee',
     'src/Depends.coffee',
     'src/Environment.coffee',
-    // 'src/Functions.coffee',
-    // 'src/Log.coffee',
-    // 'src/Maths.coffee',
-    // 'src/Numbers.coffee',
-    // 'src/Objects.coffee',
-    // 'src/Paths.coffee',
-    'src/Promises.coffee',
-    // 'src/Setter.coffee',
-    // 'src/Strings.coffee',
-    // 'src/Types.coffee'
+    'src/Promises.coffee'
   ], ['client', 'server']);
   api.addFiles([
     'src/Blobs.coffee',
     'src/Forms.coffee',
     'src/Templates.coffee',
-    // 'src/Window.coffee',
     'src/forms.less'
   ], 'client');
   api.addFiles([
