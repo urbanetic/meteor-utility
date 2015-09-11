@@ -15,7 +15,6 @@ if (typeof Meteor !== 'undefined') {
   } else if (Meteor.isCordova) {
     // Cordova console package exists only once 'deviceready' event is fired.
     $(document).on('deviceready', function() {
-      console = window.console;
       var platform = device.platform.toLowerCase();
       Log.info('Cordova logger started on platform:', platform);
     });
