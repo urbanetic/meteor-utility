@@ -289,6 +289,8 @@ Forms =
           resolveFormLoaded()
       else
         resolveFormLoaded()
+
+      if formArgs.useSemanticUi == true then Forms.addSemanticUiStyles Form.getElement(@)
       
       formArgs.onRender?.apply(@, arguments)
 
@@ -752,6 +754,10 @@ Forms =
         else
           console.warn('Unrecognised data-schema-key', key, 'for schema', schema)
     schemaInputs
+
+  # Adds Semantic UI styles to AutoForm fields which use Bootstrap by default.
+  addSemanticUiStyles: ($element) ->
+    $('.form-group', $element).addClass('ui field')
 
 ####################################################################################################
 # MISC AUXILIARY
