@@ -757,7 +757,9 @@ Forms =
 
   # Adds Semantic UI styles to AutoForm fields which use Bootstrap by default.
   addSemanticUiStyles: ($element) ->
-    $('.form-group', $element).addClass('ui field')
+    $form = if $element.is('form') then $element else $('form', $element)
+    # Only apply to root form-group elements to avoid matching other elements.
+    $('> .form-group', $form).addClass('ui field')
 
 ####################################################################################################
 # MISC AUXILIARY
