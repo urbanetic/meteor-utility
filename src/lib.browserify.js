@@ -1,7 +1,8 @@
 var exports = require('@urbanetic/utility');
 var Log = exports.Log;
 delete Log;
-_.extend(global, exports);
+// Prevent overriding existing globals.
+_.defaults(global, exports);
 
 if (typeof Meteor !== 'undefined') {
   // Log is already defined in the logging package, so we define a different global variable.

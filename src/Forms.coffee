@@ -759,7 +759,7 @@ Forms =
   addSemanticUiStyles: ($element) ->
     $form = if $element.is('form') then $element else $('form', $element)
     # Only apply to root form-group elements to avoid matching other elements.
-    $('> .form-group', $form).addClass('ui field')
+    $('> .form-group, .ui.segment > .form-group', $form).addClass('ui field')
 
 ####################################################################################################
 # MISC AUXILIARY
