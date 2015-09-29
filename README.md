@@ -3,13 +3,19 @@ A collection of utility modules.
 
 ## Installation
 
-For now, you must update the npm version used by meteor-tool to support installing the scoped NPM dependency (@urbanetic/utility).
+```
+meteor add urbanetic:utility
+```
+
+You needed to update the npm version used by meteor-tool to support installing the scoped NPM dependency (@urbanetic/utility), which needs NPM 2.7.0 or higher.
+
+[https://github.com/meteor/meteor/issues/4985](https://github.com/meteor/meteor/issues/4985)
 
 Find the Meteor NPM binary path which should be similar to:
 
 ```
-$ cd ~/.meteor/packages/meteor-tool/.1.1.4.1cp6taf++os.osx.x86_64+web.browser+web.cordova/mt-os.osx.x86_64/dev_bundle/bin
-$ ./npm update npm -g
+$ cd ~/.meteor/packages/meteor-tool/1.1.8/mt-*/dev_bundle/lib
+$ ../bin/npm install npm
 ```
 
 The path may be visible in error messages if you still have an older version of NPM:
@@ -22,4 +28,4 @@ npm ERR! npm -v 1.4.28
 npm ERR! code E404
 ```
 
-Here NPM is still 1.4.8 and should be ^2.12.0.
+Here NPM is still 1.4.8 and should be ^2.7.0.
