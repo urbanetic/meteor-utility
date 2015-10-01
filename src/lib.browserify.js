@@ -1,12 +1,22 @@
+var isMeteor = typeof Meteor !== 'undefined';
 var exports = require('@urbanetic/utility');
 var Log = exports.Log;
-delete Log;
+
+// Log is already defined in the logging package, so we define a different global variable.
+if (isMeteor) {
+  delete exports.Log;
+  global.Logger = Log;
+}
+
+// The Window interface is global so merge methods.
+if (typeof Window !== 'undefined') {
+  _.extend(Window, exports.Window);
+  delete exports.Window;
+}
 // Prevent overriding existing globals.
 _.defaults(global, exports);
 
-if (typeof Meteor !== 'undefined') {
-  // Log is already defined in the logging package, so we define a different global variable.
-  global.Logger = Log;
+if (isMeteor) {
   if (Meteor.isServer) {
     var logLevel = process.env.LOG_LEVEL;
     if (logLevel != null) {
