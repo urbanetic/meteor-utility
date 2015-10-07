@@ -26,12 +26,12 @@ Forms =
         # the doc promise is resolved and the form is considered loaded.
         return false if Q.isPending(Form.whenLoaded(template))
 
-        result = onSubmit?.apply(@, args)
-        callback = => template.settings.onSubmit?.apply(@, args)
-        deferCallback(result, callback)
+        result = tryCallback => onSubmit?.apply(@, args)
+        return false if isError(result)
+        deferCallback result, => template.settings.onSubmit?.apply(@, args)
         # Perform logic for submitting bulk forms.
         if Form.isBulk(template)
-          Form.submitBulkForm(insertDoc, updateDoc, currentDoc, @, template)
+          result = tryCallback => Form.submitBulkForm(insertDoc, updateDoc, currentDoc, @, template)
         else if !onSubmit?
           # Ensure onSuccess() is called.
           @done()
@@ -43,10 +43,9 @@ Forms =
         template = getTemplate(@template)
         Form.updateDocs(template)
         Form.setUpDocs(template)
-        onSuccess = formArgs.onSuccess
-        successResult = onSuccess?.apply(@, args)
-        callback = => template.settings.onSuccess?.apply(@, args)
-        deferCallback(successResult, callback)
+        result = tryCallback => formArgs.onSuccess?.apply(@, args)
+        return if isError(result)
+        deferCallback result, => template.settings.onSuccess?.apply(@, args)
 
       before:
         insert: (doc) ->
@@ -766,9 +765,18 @@ Forms =
 ####################################################################################################
 
 deferCallback = (result, callback) ->
-  # Defer the callback if the result is a promise. Otherwise execute
-  # callback immediately.
+  # Defer the callback if the result is a promise. Otherwise execute callback immediately.
   if result?.then
-    result.then -> callback()
+    result.then -> tryCallback(callback)
   else
+    tryCallback(callback)
+
+tryCallback = (callback, msg) ->
+  msg ?= 'Form error'
+  try
     callback()
+  catch err
+    Logger.error msg, err
+    return err
+
+isError = (obj) -> obj instanceof Error
