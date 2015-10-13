@@ -377,11 +377,11 @@ Collections =
       # TODO(aramk) The deferred won't run in time since hooks are not asynchronous yet, so it won't
       # prevent the collection methods from being called.
       # https://github.com/matb33/meteor-collection-hooks/issues/71
-      handle = (invalidReason) -> throw invalidReason
-      if result && result.then
-        result.then(handle, handle)
+      handleResult = (invalidReason) -> throw invalidReason if invalidReason?
+      if result?.then?
+        result.then(handleResult, handleResult)
       else
-        handle(result)
+        handleResult(result)
     catch err
       throw @_wrapMeteorError(err)
 
