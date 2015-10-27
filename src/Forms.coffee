@@ -51,6 +51,7 @@ Forms =
         insert: (doc) ->
           template = getTemplate(@template)
           return false if Q.isPending(Form.whenLoaded(template))
+          template.settings.before?.insert?.apply(@, arguments)
           doc
 
         update: (modifier) ->
@@ -71,6 +72,7 @@ Forms =
               if fields?
                 _.each fields, (value, key) ->
                   if changes[key] == undefined then delete fields[key]
+          template.settings.before?.update?.apply(@, arguments)
           modifier
 
       onError: (operation, error) ->
