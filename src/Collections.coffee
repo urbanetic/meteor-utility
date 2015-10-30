@@ -331,7 +331,11 @@ Collections =
     unless id? then throw new Error('No document ID provided')
     collection = @get(arg)
     unless collection then throw new Error('No collection provided')
-    collection._collection?._docs?.has(id) ? false
+    if Meteor.isClient
+      collection._collection?._docs?.has(id) ? false
+    else
+      collection.findOne(_id: id)?
+
 
   getDocChanges: (oldDoc, newDoc) ->
     oldDoc = Objects.flattenProperties(oldDoc)
