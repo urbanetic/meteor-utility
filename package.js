@@ -34,7 +34,8 @@ Package.onUse(function(api) {
     'matb33:collection-hooks@0.8.0',
     'semantic:ui-css@2.0.8',
     'session@1.1.0',
-    'reactive-var@1.0.5'
+    'reactive-var@1.0.5',
+    'tracker@1.0.5'
   ], 'client', {weak: true});
   // Either of these will contain the Async module, but we don't want to strongly require either
   // since we don't know which is being used.
