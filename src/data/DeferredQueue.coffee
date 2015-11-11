@@ -1,6 +1,13 @@
 class DeferredQueue
   
-  constructor: ->
+  # A queue of deferred promises where each item waits on the previous one to complete before
+  # proceeding.
+  #  * `settings.continueOnFail` - A boolean for whether to continue executing the remaining queue
+  #        when a promise fails. True by default.
+  constructor: (settings) ->
+    @_settings = Setter.merge
+      continueOnFail: true
+    , settings
     @queue = []
     # A list of callbacks which are fired once all promises in the queue are resolved.
     @waitCallbacks = []
@@ -30,13 +37,17 @@ class DeferredQueue
       @_resolveWaiting()
     execute = Meteor.bindEnvironment =>
       # If the promise is fulfilled due to a clear() then avoid running the callback.
-      unless df.promise.isPending() then return
+      return unless df.promise.isPending()
       try
         df.resolve(callback())
       catch e
         df.reject(e)
     if len > 0
-      @wait(len - 1).then(execute, df.reject)
+      waitPromise = @wait(len - 1)
+      if @_settings.continueOnFail
+        waitPromise.fin(execute)
+      else
+        waitPromise.then(execute, df.reject)
     else
       execute()
     df.promise.fin(fin)

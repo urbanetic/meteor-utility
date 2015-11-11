@@ -331,7 +331,11 @@ Collections =
     unless id? then throw new Error('No document ID provided')
     collection = @get(arg)
     unless collection then throw new Error('No collection provided')
-    collection._collection?._docs?.has(id) ? false
+    if Meteor.isClient
+      collection._collection?._docs?.has(id) ? false
+    else
+      collection.findOne(_id: id)?
+
 
   getDocChanges: (oldDoc, newDoc) ->
     oldDoc = Objects.flattenProperties(oldDoc)
@@ -360,7 +364,7 @@ Collections =
     collection.before.insert (userId, doc, options) =>
       return if options?.validate == false
       context = {userId: userId, options: options}
-      @_handleValidationResult validate.call context, doc
+      @_handleValidationResult -> validate.call context, doc
     collection.before.update (userId, doc, fieldNames, modifier, options) =>
       return if options?.validate == false
       doc = @simulateModifierUpdate(doc, modifier)
@@ -369,17 +373,32 @@ Collections =
         fieldNames: fieldNames
         modifier: modifier
         options: options
-      @_handleValidationResult validate.call context, doc
+      @_handleValidationResult -> validate.call context, doc
 
-  _handleValidationResult: (result) ->
-    # TODO(aramk) The deferred won't run in time since hooks are not asynchronous yet, so it won't
-    # prevent the collection methods from being called.
-    # https://github.com/matb33/meteor-collection-hooks/issues/71
-    handle = (invalid) -> throw new Error(invalid) if invalid
-    if result && result.then
-      result.then(handle, handle)
+  _handleValidationResult: (callback) ->
+    try
+      result = callback()
+      # TODO(aramk) The deferred won't run in time since hooks are not asynchronous yet, so it won't
+      # prevent the collection methods from being called.
+      # https://github.com/matb33/meteor-collection-hooks/issues/71
+      handleResult = (invalidReason) -> throw invalidReason if invalidReason?
+      if result?.then?
+        result.then(handleResult, handleResult)
+      else
+        handleResult(result)
+    catch err
+      throw @_wrapMeteorError(err)
+
+  # Returns a Meteor.Error. If `error` is not a Meteor.Error it is wrapped in one.
+  _wrapMeteorError: (error) ->
+    if error instanceof Meteor.Error
+      error
+    else if error instanceof Error
+      wrapped = new Meteor.Error(500, error.message)
+      wrapped.stack = error.stack
+      wrapped
     else
-      handle(result)
+      new Meteor.Error(500, error)
 
   # Simulates the given operation on the given collection. Throws errors on failure or true on
   # success.
