@@ -211,7 +211,6 @@ Forms =
 
       schemaInputs = Form.getSchemaInputs(@)
       popupInputs = []
-      hasRequiredField = false
       _.each schemaInputs, (input, key) ->
         $input = $(input.node)
         if Forms.isCheckbox($input)
@@ -223,24 +222,18 @@ Forms =
         if desc?
           popupInputs.push($input.data('desc', desc))
         # Add units into labels
-        $label = Forms.getInputLabel($input)
-        units = field.units
-        $labelContent = $('<div class="value">' + $label.html() + '</div>')
-        $label.empty()
-        $label.append($labelContent)
         if units?
+          $label = Forms.getInputLabel($input)
+          units = field.units
+          $labelContent = $('<div class="value">' + $label.html() + '</div>')
+          $label.empty()
+          $label.append($labelContent)
           formattedUnits = Strings.format.scripts(units)
           $units = $('<div class="units">' + formattedUnits + '</div>')
           $label.append($units)
         required = field.optional != true
-        if required
-          Forms.addRequiredLabel($label)
-          hasRequiredField = true
 
       Form.setUpFields(@)
-
-      if hasRequiredField
-        @$('.ui.form.segment').append($('<div class="footer"><div class="required"></div>Required field</div>'))
 
       addPopups = ->
         return unless supportsPopups()
@@ -644,10 +637,6 @@ Forms =
   ##################################################################################################
   # STATICS
   ##################################################################################################
-
-  addRequiredLabel: ($label) ->
-    $requiredContent = $('<div class="required"></div>')
-    $label.append($requiredContent)
 
   getRequiredLabels: ($em) -> $('.required', $em)
 
