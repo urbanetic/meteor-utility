@@ -444,7 +444,7 @@ Collections =
       # Ensure no fields exist in $unset from $set.
       $unset = modifier.$unset
       if $unset
-        _.each $set, (value, key) ->
+        _.each modifier.$set, (value, key) ->
           delete $unset[key]
 
 ####################################################################################################
