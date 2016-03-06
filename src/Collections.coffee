@@ -337,11 +337,22 @@ Collections =
     unless id? then throw new Error('No document ID provided')
     collection = @get(arg)
     unless collection then throw new Error('No collection provided')
-    if Meteor.isClient
-      collection._collection?._docs?.has(id) ? false
-    else
-      collection.findOne(_id: id)?
+    collection._collection?._docs?.has(id) ? collection.findOne(_id: id)? ? false
 
+  # @param {String|Meteor.Collection|Cursor} arg
+  # @param {String} id - A document ID.
+  # @param {Object} [options.clone=true] - Whether to clone the document (default). If false,
+  #     the document object will be accessed directly from the IdMap if possible. This results in
+  #     higher performance at the risk of exposing the mutable document.
+  # @returns {Object} The document exists in the given collection.
+  getDoc: (arg, id, options) ->
+    unless id? then throw new Error('No document ID provided')
+    collection = @get(arg)
+    unless collection then throw new Error('No collection provided')
+    if options?.clone == false
+      collection._collection?._docs?.get(id)
+    else
+      collection.findOne(_id: id)
 
   getDocChanges: (oldDoc, newDoc) ->
     oldDoc = Objects.flattenProperties(oldDoc)
