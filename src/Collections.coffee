@@ -71,13 +71,19 @@ Collections =
   isCursor: (obj) -> obj && Types.isFunction(obj.fetch)
 
   # @param {Meteor.Collection|Cursor|Array} arg
+  # @param {Object} [options]
+  # @param {Object} [options.clone=true] - Whether to clone returned documents (default). If false,
+  #     the document objects will be accessed directly from the IdMap if possible. This results in
+  #     higher performance at the risk of exposing the mutable documents.
   # @returns {Array} The items in the collection, or the cursor, or the original array passed.
-  getItems: (arg) ->
+  getItems: (arg, options) ->
     if Types.isArray(arg)
       return arg
     if Types.isString(arg)
       arg = @get(arg)
     if @isCollection(arg)
+      if options?.clone == false
+        return _.values(arg._collection._docs._map)
       arg = arg.find({})
     if @isCursor(arg)
       return arg.fetch()
