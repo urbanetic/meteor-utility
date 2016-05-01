@@ -9,7 +9,7 @@ Package.onUse(function(api) {
   Npm.depends({
     '@urbanetic/utility': '0.1.2'
   });
-  api.versionsFrom('METEOR@0.9.0');
+  api.versionsFrom('METEOR@1.2.1');
   api.use([
     'coffeescript',
     'underscore',

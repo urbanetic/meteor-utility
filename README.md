@@ -7,7 +7,9 @@ A collection of utility modules.
 meteor add urbanetic:utility
 ```
 
-You needed to update the npm version used by meteor-tool to support installing the scoped NPM dependency (@urbanetic/utility), which needs NPM 2.7.0 or higher.
+### Meteor 1.2 and below
+
+As of Meteor 1.3, npm has been updated to 2.14.22 which allows scoped packages. For all previous versions of Meteor, you needed to update the npm version used by meteor-tool to support installing the scoped NPM dependency (@urbanetic/utility), which needs NPM 2.7.0 or higher.
 
 [https://github.com/meteor/meteor/issues/4985](https://github.com/meteor/meteor/issues/4985)
 
