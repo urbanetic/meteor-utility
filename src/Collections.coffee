@@ -35,7 +35,10 @@ Collections =
       # Attempt to find Meteor.Collection from LocalCollection.
       collection = arg.collection
       if collection
-        collection = @get(Collections.getTitle(collection)) ? collection
+        if collection == Meteor.users._collection
+          return Meteor.users
+        else
+          collection = @get(Collections.getTitle(collection)) ? collection
       collection
     else if @isCollection(arg)
       arg
