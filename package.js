@@ -29,7 +29,7 @@ Package.onUse(function(api) {
   api.addFiles(['src/lib.browserify.js']);
 
   api.use([
-    'aldeed:autoform@5.1.2',
+    'aldeed:autoform@5.8.1',
     'momentjs:moment@2.10.3',
     'matb33:collection-hooks@0.8.0',
     'semantic:ui-css@2.0.8',
@@ -44,8 +44,8 @@ Package.onUse(function(api) {
     'meteorhacks:npm@1.2.2'
   ], 'server', {weak: true});
   api.use([
-    'aldeed:simple-schema@1.3.0',
-    'aldeed:collection2@2.3.2'
+    'aldeed:simple-schema@1.5.3',
+    'aldeed:collection2@2.3.3'
   ], ['client', 'server']);
   // Make these available to the app to allow working with tiem and deferreds.
   api.imply(['momentjs:moment', 'aramk:q'], ['client','server'])
