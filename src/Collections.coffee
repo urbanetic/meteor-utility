@@ -32,7 +32,14 @@ Collections =
       # Collection name.
       global[arg]
     else if @isCursor(arg)
-      arg.collection
+      # Attempt to find Meteor.Collection from LocalCollection.
+      collection = arg.collection
+      if collection
+        if collection == Meteor.users._collection
+          return Meteor.users
+        else
+          collection = @get(Collections.getTitle(collection)) ? collection
+      collection
     else if @isCollection(arg)
       arg
     else
