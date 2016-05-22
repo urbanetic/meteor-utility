@@ -60,11 +60,13 @@ Collections =
 
   # @param {*) obj
   # @returns {Boolean} Whether the given object is a collection.
-  isCollection: (obj) -> 
+  isCollection: (obj) ->
+    FsCollection = FS?.Collection
     obj instanceof Meteor.Collection || obj instanceof Mongo.Collection ||
     # Packages may wrap the collection classes causing instanceof checks to fail, so we check the
     # raw underlying collection as well if it exists.
-    obj instanceof LocalCollection || (obj?._collection? and @isCollection(obj._collection))
+    obj instanceof LocalCollection || (obj?._collection? and @isCollection(obj._collection)) ||
+    (FsCollection? and obj instanceof FsCollection)
 
   # @param obj
   # @returns {Boolean} Whether the given object is a collection cursor.
@@ -97,6 +99,7 @@ Collections =
     _.each collections, (collection) =>
       name = @getName(collection)
       collectionMap[name] = collection
+      return
     collectionMap
 
   # @param {Object.<String, String>} map - A map of IDs to names of the items.
@@ -145,8 +148,7 @@ Collections =
     if Types.isFunction(args)
       args = {added: args, changed: args, removed: args}
     args = _.extend({triggerExisting: false}, args)
-    createHandler = (handler) ->
-      -> handler.apply(@, arguments) if observing
+    createHandler = (handler) -> -> handler.apply(@, arguments) if observing
     observeArgs = {}
     _.each ['added', 'changed', 'removed'], (methodName) ->
       handler = args[methodName]
@@ -288,7 +290,7 @@ Collections =
   simulateModifierUpdate: (doc, modifier) ->
     # TODO(aramk) If non-modifier properties are passed, this can result in them being merged at
     # times, though it should be throwing an error in mongo.
-    if Object.keys(modifier).length > 1 && !modifier.$set? && !modifier.$unset?
+    if _.keys(modifier).length > 1 && !modifier.$set? && !modifier.$unset?
       throw new Error('Unexpected keys in modifier.')
     tmpCollection = @createTemporary()
     doc = Setter.clone(doc)
@@ -364,6 +366,7 @@ Collections =
         # Change null values to undefined to mark the field as removed.
         if value == null then value = undefined
         changes[key] = value
+      return
     _.each oldDoc, (value, key) -> if !newDoc[key]? then changes[key] = undefined
     changes
 
@@ -371,7 +374,7 @@ Collections =
 # VALIDATION
 ####################################################################################################
 
-  # Adds a validation method for the given colleciton. NOTE: Use allow() and deny() rules on
+  # Adds a validation method for the given collection. NOTE: Use allow() and deny() rules on
   # collections where possible to remain consistent with the Meteor API.
   # @param {Meteor.Collection} collection
   # @param {Function} validate - A validation method which returns a string on failure or throws
@@ -380,8 +383,9 @@ Collections =
   addValidation: (collection, validate) ->
     collection.before.insert (userId, doc, options) =>
       return if options?.validate == false
-      context = {userId: userId, options: options}
-      @_handleValidationResult -> validate.call context, doc
+      context = {userId: userId, options: options, action: 'insert'}
+      @_handleValidationResult -> validate.call(context, doc)
+
     collection.before.update (userId, doc, fieldNames, modifier, options) =>
       return if options?.validate == false
       doc = @simulateModifierUpdate(doc, modifier)
@@ -390,7 +394,13 @@ Collections =
         fieldNames: fieldNames
         modifier: modifier
         options: options
-      @_handleValidationResult -> validate.call context, doc
+        action: 'update'
+      @_handleValidationResult -> validate.call(context, doc)
+
+    collection.before.remove (userId, doc, options) =>
+      return if options?.validate == false
+      context = {userId: userId, options: options, action: 'remove'}
+      @_handleValidationResult -> validate.call(context, doc)
 
   _handleValidationResult: (callback) ->
     try
@@ -450,7 +460,7 @@ Collections =
         updatedDoc = @simulateModifierUpdate(doc, modifier)
         Setter.merge(doc, updatedDoc)
 
-    collection.before.update (userId, doc, fieldNames, modifier) ->
+    beforeUpdate = (userId, doc, fieldNames, modifier) ->
       updatedDoc = Collections.simulateModifierUpdate(doc, modifier)
       context = {userId: userId}
       # sanitizedDoc = Setter.clone(updatedDoc)
@@ -461,8 +471,12 @@ Collections =
       # Ensure no fields exist in $unset from $set.
       $unset = modifier.$unset
       if $unset
-        _.each modifier.$set, (value, key) ->
-          delete $unset[key]
+        _.each modifier.$set, (value, key) -> delete $unset[key]
+
+    collection.before.update -> beforeUpdate.apply(@, arguments)
+
+    collection.before.upsert (userId, doc, modifier) ->
+      beforeUpdate.call(@, userId, doc, [], modifier)
 
 ####################################################################################################
 # SCHEMAS
@@ -470,8 +484,7 @@ Collections =
 
   getField: (arg, fieldId) ->
     schema = @getSchema(arg)
-    unless schema
-      throw new Error('Count not determine schema from: ' + arg)
+    unless schema then throw new Error("Could not determine schema from: #{arg}")
     schema.schema(fieldId)
 
   # Traverse the given schema and call the given callback with the field schema and ID.

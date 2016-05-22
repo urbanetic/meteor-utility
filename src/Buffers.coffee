@@ -4,6 +4,7 @@ Buffers =
     Promises.runSync (done) ->
       buffers = []
       stream.on 'data', (buffer) -> buffers.push(buffer)
+      stream.on 'error', (err) -> done(err, null)
       stream.on 'end', -> done(null, Buffer.concat(buffers))
 
   fromArrayBuffer: (arrayBuffer) ->
