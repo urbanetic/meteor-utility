@@ -7,7 +7,7 @@ Environment =
       env = process.env.NODE_ENV
       if env?
         env
-      else if process.env.ROOT_URL?.indexOf('//localhost:3000') >= 0
+      else if /\/\/localhost\b/.test(Meteor.absoluteUrl())
         env = 'development'
       else
         env = 'production'
