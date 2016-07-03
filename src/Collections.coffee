@@ -288,7 +288,8 @@ Collections =
 
   removeAllDocs: (collection) ->
     # Non-reactive to ensure this command doesn't re-run when the collection changes.
-    docs = Tracker.nonreactive -> collection.find().fetch()
+    getDocs = -> collection.find().fetch()
+    docs = if Tracker? then Tracker.nonreactive -> getDocs() else getDocs()
     _.each docs, (doc) -> collection.remove(doc._id)
 
   # @param {Object} doc
