@@ -405,6 +405,18 @@ Collections =
         action: 'update'
       @_handleValidationResult -> validate.call(context, doc)
 
+    collection.before.upsert (userId, selector, modifier, options) =>
+      return if options?.validate == false
+      doc = collection.findOne(selector) ? {}
+      doc = @simulateModifierUpdate(doc, modifier)
+      context =
+        userId: userId
+        selector: selector
+        modifier: modifier
+        options: options
+        action: 'upsert'
+      @_handleValidationResult -> validate.call(context, doc)
+
     collection.before.remove (userId, doc, options) =>
       return if options?.validate == false
       context = {userId: userId, options: options, action: 'remove'}
