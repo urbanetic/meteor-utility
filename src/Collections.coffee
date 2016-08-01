@@ -434,6 +434,7 @@ Collections =
       else
         handleResult(result)
     catch err
+      Logger.error('Validation error', err, err.stack, notify: false)
       throw @_wrapMeteorError(err)
 
   # Returns a Meteor.Error. If `error` is not a Meteor.Error it is wrapped in one.
