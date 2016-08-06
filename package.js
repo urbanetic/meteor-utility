@@ -1,7 +1,7 @@
 Package.describe({
   name: 'urbanetic:utility',
   summary: 'A collection of utility modules',
-  version: '1.2.3',
+  version: '1.2.4',
   git: 'https://github.com/urbanetic/meteor-utility.git'
 });
 

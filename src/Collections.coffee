@@ -294,8 +294,9 @@ Collections =
 
   # @param {Object} doc
   # @param {Object} modifier - A MongoDB modifier object.
+  # @param {Object} selector - A MongoDB selector object. Defaults to doc._id.
   # @returns {Object} A copy of the given doc with the given modifier updates applied.
-  simulateModifierUpdate: (doc, modifier) ->
+  simulateModifierUpdate: (doc, modifier, selector) ->
     # TODO(aramk) If non-modifier properties are passed, this can result in them being merged at
     # times, though it should be throwing an error in mongo.
     if _.keys(modifier).length > 1 && !modifier.$set? && !modifier.$unset?
@@ -304,7 +305,8 @@ Collections =
     doc = Setter.clone(doc)
     # This is synchronous since it's a local collection.
     insertedId = tmpCollection.insert(doc)
-    tmpCollection.update(insertedId, modifier)
+    selector ?= {_id: insertedId}
+    tmpCollection.update(selector, modifier)
     tmpCollection.findOne(_id: insertedId)
 
   # @param {String|Meteor.Collection|Cursor} arg
@@ -394,16 +396,19 @@ Collections =
       context = {userId: userId, options: options, action: 'insert'}
       @_handleValidationResult -> validate.call(context, doc)
 
-    collection.before.update (userId, doc, fieldNames, modifier, options) =>
+    collection.before.update (userId, doc, fieldNames, modifier, options) ->
+      selector = @args[0]
       return if options?.validate == false
-      doc = @simulateModifierUpdate(doc, modifier)
+      # NOTE: Original selector is necessary if using $ operator in an array key.
+      # https://github.com/meteor/meteor/issues/7596
+      doc = Collections.simulateModifierUpdate(doc, modifier, selector)
       context =
         userId: userId
         fieldNames: fieldNames
         modifier: modifier
         options: options
         action: 'update'
-      @_handleValidationResult -> validate.call(context, doc)
+      Collections._handleValidationResult -> validate.call(context, doc)
 
     collection.before.upsert (userId, selector, modifier, options) =>
       return if options?.validate == false
