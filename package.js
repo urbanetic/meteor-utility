@@ -1,13 +1,13 @@
 Package.describe({
   name: 'urbanetic:utility',
   summary: 'A collection of utility modules',
-  version: '1.2.4',
+  version: '1.2.5',
   git: 'https://github.com/urbanetic/meteor-utility.git'
 });
 
 Package.onUse(function(api) {
   Npm.depends({
-    '@urbanetic/utility': '0.1.8'
+    '@urbanetic/utility': '0.1.9'
   });
   api.versionsFrom('METEOR@1.2.1');
   api.use([
