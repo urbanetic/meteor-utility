@@ -661,7 +661,9 @@ Forms =
       @setSelectValue($input, value)
     else if @isCheckbox($input)
       $input.prop('checked', value)
-    else
+    else if !$input.data('cfs-collection')
+      # Prevent triggering value change for cfs:autoform (e.g. when form is reactive) since it
+      # handles itself.
       $input.val(value)
     return true
 
