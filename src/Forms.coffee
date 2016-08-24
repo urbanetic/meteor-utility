@@ -152,11 +152,11 @@ Forms =
       # Without this a separate copy is passed across, which doesn't allow sharing data between
       # create method and form hooks.
       doc: -> Tracker.nonreactive -> Form.getValues()
-      formTitle: -> Tracker.nonreactive -> Form.getFormTitle()
-      formType: -> Tracker.nonreactive -> 
-        return if Form.isBulk()
+      formTitle: -> Form.getFormTitle()
+      formType: ->
         doc = Form.getDocs()[0]
         type = Form.getTemplate().settings.formType
+        return if Form.isBulk()
         # Allow passing type = null to trigger onSubmit() hook.
         if type == undefined then type = formArgs.type
         if type == undefined then type = (if doc then 'update' else 'insert')
