@@ -186,7 +186,6 @@ Forms =
     Form.created = ->
       @settings = @data?.settings ? {}
       Form.setUpDocs(@)
-      if Form.isReactive() then Form.setUpReactivity()
       @isSubmitting = new ReactiveVar(false) unless formArgs.reactiveSubmittingVar == false
       @loadDf = Q.defer()
       formArgs.onCreate?.apply(@, arguments)
@@ -464,6 +463,7 @@ Forms =
       template.docs ?= new ReactiveVar({})
       template.docs.set(docs)
       updateDataDocs(template)
+      if Form.isReactive() then Form.setUpReactivity()
 
     Form.updateDocs = (template) ->
       collection = Form.getCollection()
