@@ -463,7 +463,7 @@ Forms =
       template.docs ?= new ReactiveVar({})
       template.docs.set(docs)
       updateDataDocs(template)
-      if Form.isReactive() then Form.setUpReactivity()
+      if Form.isReactive() then Form.setUpReactivity(template)
 
     Form.updateDocs = (template) ->
       collection = Form.getCollection()
