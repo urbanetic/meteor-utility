@@ -152,11 +152,11 @@ Forms =
       # Without this a separate copy is passed across, which doesn't allow sharing data between
       # create method and form hooks.
       doc: -> Tracker.nonreactive -> Form.getValues()
-      formTitle: -> Tracker.nonreactive -> Form.getFormTitle()
-      formType: -> Tracker.nonreactive -> 
-        return if Form.isBulk()
+      formTitle: -> Form.getFormTitle()
+      formType: ->
         doc = Form.getDocs()[0]
         type = Form.getTemplate().settings.formType
+        return if Form.isBulk()
         # Allow passing type = null to trigger onSubmit() hook.
         if type == undefined then type = formArgs.type
         if type == undefined then type = (if doc then 'update' else 'insert')
@@ -186,7 +186,6 @@ Forms =
     Form.created = ->
       @settings = @data?.settings ? {}
       Form.setUpDocs(@)
-      if Form.isReactive() then Form.setUpReactivity()
       @isSubmitting = new ReactiveVar(false) unless formArgs.reactiveSubmittingVar == false
       @loadDf = Q.defer()
       formArgs.onCreate?.apply(@, arguments)
@@ -464,6 +463,7 @@ Forms =
       template.docs ?= new ReactiveVar({})
       template.docs.set(docs)
       updateDataDocs(template)
+      if Form.isReactive() then Form.setUpReactivity(template)
 
     Form.updateDocs = (template) ->
       collection = Form.getCollection()
@@ -661,7 +661,9 @@ Forms =
       @setSelectValue($input, value)
     else if @isCheckbox($input)
       $input.prop('checked', value)
-    else
+    else if !$input.data('cfs-collection')
+      # Prevent triggering value change for cfs:autoform (e.g. when form is reactive) since it
+      # handles itself.
       $input.val(value)
     return true
 
