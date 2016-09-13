@@ -7,13 +7,15 @@ Package.describe({
 
 Package.onUse(function(api) {
   Npm.depends({
-    '@urbanetic/utility': '0.1.8'
+    '@urbanetic/utility': '0.1.8',
+    'downloadjs': '1.4.6'
   });
-  api.versionsFrom('METEOR@1.2.1');
+  api.versionsFrom('METEOR@1.3.4');
   api.use([
     'coffeescript',
     'underscore',
     'minimongo',
+    'ecmascript',
     'aramk:q@1.0.1_1',
     'aramk:tinycolor@1.1.0_1',
   ], ['client', 'server']);

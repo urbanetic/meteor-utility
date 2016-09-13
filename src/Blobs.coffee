@@ -1,3 +1,5 @@
+download = require('downloadjs')
+
 Blobs =
 
   fromString: (str, args) ->
@@ -5,9 +7,4 @@ Blobs =
     new Blob([result], args)
 
   downloadInBrowser: (blob, filename) ->
-    link = document.createElement('a')
-    link.href = window.URL.createObjectURL(blob)
-    link.download = filename
-    $(link).attr('data-downloadurl', [blob.type, link.download, link.href].join(':'))
-    link.click()
-    link.remove()
+    download(blob, filename, blob.type)
