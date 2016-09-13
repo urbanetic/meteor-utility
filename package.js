@@ -22,7 +22,9 @@ Package.onUse(function(api) {
     'deps',
     'jquery',
     'less',
-    'templating'
+    'templating',
+    // Add this to the server causes startup failures.
+    'ecmascript'
   ], 'client');
 
   // Compile the Node.js package for server and client, and export the global Services namespace.
