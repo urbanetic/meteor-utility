@@ -1,4 +1,4 @@
-download = require('downloadjs')
+download = null
 
 Blobs =
 
@@ -7,4 +7,5 @@ Blobs =
     new Blob([result], args)
 
   downloadInBrowser: (blob, filename) ->
+    download ?= require('downloadjs')
     download(blob, filename, blob.type)
