@@ -22,9 +22,7 @@ Package.onUse(function(api) {
     'deps',
     'jquery',
     'less',
-    'templating',
-    // Add this to the server causes startup failures.
-    'ecmascript'
+    'templating'
   ], 'client');
 
   // Compile the Node.js package for server and client, and export the global Services namespace.
@@ -83,6 +81,7 @@ Package.onUse(function(api) {
     'src/Promises.coffee'
   ], ['client', 'server']);
   api.addFiles([
+    'src/lib/download.min.js',
     'src/Blobs.coffee',
     'src/Forms.coffee',
     'src/Templates.coffee',
