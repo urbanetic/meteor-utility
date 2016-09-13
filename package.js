@@ -15,7 +15,6 @@ Package.onUse(function(api) {
     'coffeescript',
     'underscore',
     'minimongo',
-    'ecmascript',
     'aramk:q@1.0.1_1',
     'aramk:tinycolor@1.1.0_1',
   ], ['client', 'server']);
