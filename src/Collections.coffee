@@ -286,11 +286,15 @@ Collections =
 
   insertAll: (docs, collection) -> _.each docs, (doc) -> collection.insert(doc)
 
-  removeAllDocs: (collection) ->
+  removeAllDocs: (collection, options) ->
     # Non-reactive to ensure this command doesn't re-run when the collection changes.
     getDocs = -> collection.find().fetch()
     docs = if Tracker? then Tracker.nonreactive -> getDocs() else getDocs()
-    _.each docs, (doc) -> collection.remove(doc._id)
+    _.each docs, (doc) ->
+      if options?.soft == false and collection.direct?
+        collection.direct.remove(doc._id)
+      else
+        collection.remove(doc._id)
 
   # @param {Object} doc
   # @param {Object} modifier - A MongoDB modifier object.
