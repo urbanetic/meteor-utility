@@ -130,3 +130,4 @@ Templates =
     else
       Template[templateOrName]
 
+Template.registerHelper 'getSession', (name) -> Session.get(name)
