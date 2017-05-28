@@ -403,6 +403,8 @@ Collections =
     collection.before.update (userId, doc, fieldNames, modifier, options) ->
       selector = @args[0]
       return if options?.validate == false
+      # _id is not allowed in the modifier
+      if modifier.$set then delete modifier.$set._id
       # NOTE: Original selector is necessary if using $ operator in an array key.
       # https://github.com/meteor/meteor/issues/7596
       doc = Collections.simulateModifierUpdate(doc, modifier, selector)
