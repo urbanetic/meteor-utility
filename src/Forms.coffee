@@ -488,13 +488,15 @@ Forms =
       else
         docs = []
       parsedDocs = {}
-      _.each docs, (doc) ->
-        if Types.isString(doc)
-          docId = doc
-          doc = Form.getCollection().findOne(_id: docId)
-        else
-          docId = doc._id
-        parsedDocs[docId] = doc
+      collection = Form.getCollection()
+      if collection
+        _.each docs, (doc) ->
+          if Types.isString(doc)
+            docId = doc
+            doc = collection.findOne(_id: docId)
+          else
+            docId = doc._id
+          parsedDocs[docId] = doc
       parsedDocs
 
     Form.setUpFields = (template) ->
