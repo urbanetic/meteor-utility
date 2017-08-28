@@ -477,10 +477,12 @@ Forms =
       updateDataDocs(template)
 
     Form.parseDocs = (template) ->
+      collection = Form.getCollection()
       template = getTemplate(template)
       data = template.data ? {}
       if template.docs?
-        docs = _.keys(template.docs.get())
+        docs = template.docs.get()
+        docs = _.keys(docs) if collection?
       else if data.docs?
         docs = data.docs
       else if data.doc?
@@ -488,15 +490,13 @@ Forms =
       else
         docs = []
       parsedDocs = {}
-      collection = Form.getCollection()
-      if collection
-        _.each docs, (doc) ->
-          if Types.isString(doc)
-            docId = doc
-            doc = collection.findOne(_id: docId)
-          else
-            docId = doc._id
-          parsedDocs[docId] = doc
+      _.each docs, (doc) ->
+        if Types.isString(doc) and collection?
+          docId = doc
+          doc = collection.findOne(_id: docId)
+        else
+          docId = doc._id
+        parsedDocs[docId] = doc
       parsedDocs
 
     Form.setUpFields = (template) ->
