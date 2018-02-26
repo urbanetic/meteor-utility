@@ -1,7 +1,7 @@
 Package.describe({
   name: 'urbanetic:utility',
   summary: 'A collection of utility modules',
-  version: '1.3.0',
+  version: '2.0.0',
   git: 'https://github.com/urbanetic/meteor-utility.git'
 });
 
@@ -10,7 +10,7 @@ Package.onUse(function(api) {
     '@urbanetic/utility': '0.1.10',
     'downloadjs': '1.4.6'
   });
-  api.versionsFrom('METEOR@1.3.4');
+  api.versionsFrom('METEOR@1.6.1');
   api.use([
     'coffeescript',
     'underscore',
@@ -26,14 +26,14 @@ Package.onUse(function(api) {
   ], 'client');
 
   // Compile the Node.js package for server and client, and export the global Services namespace.
-  api.use(['cosmos:browserify@0.5.0']);
+  api.use(['cosmos:browserify@0.10.0']);
   api.addFiles(['src/lib.browserify.js']);
 
   api.use([
     'aldeed:autoform@5.8.1',
     'momentjs:moment@2.10.3',
     'matb33:collection-hooks@0.8.0',
-    'semantic:ui-css@2.0.8',
+    'semantic:ui-css@2.1.2',
     'session@1.1.0',
     'reactive-var@1.0.5',
     'tracker@1.0.5'
