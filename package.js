@@ -12,7 +12,7 @@ Package.onUse(function(api) {
   });
   api.versionsFrom('METEOR@1.6.1');
   api.use([
-    'coffeescript',
+    'coffeescript@1.2.3',
     'underscore',
     'minimongo',
     'aramk:q@1.0.1_1',
@@ -22,7 +22,7 @@ Package.onUse(function(api) {
     'deps',
     'jquery',
     'less',
-    'templating'
+    'templating@1.3.2'
   ], 'client');
 
   // Compile the Node.js package for server and client, and export the global Services namespace.
