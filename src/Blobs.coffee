@@ -1,3 +1,5 @@
+download = require('downloadjs')
+
 Blobs =
 
   fromString: (str, args) ->
