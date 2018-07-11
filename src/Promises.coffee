@@ -21,10 +21,13 @@ Promises =
         callbackResult = callback(done)
         # If returning a deferred object, use the then() method. Otherwise, the callback should use
         # the done() method.
-        callbackResult?.then?(
-          (result) -> done(null, result)
-          (err) -> done(err, null)
-        )
+        onDone = (result) -> done(null, result)
+        onError = (err) -> done(err, null)
+        if callbackResult?.catch?
+          callbackResult?.then?(onDone)
+          callbackResult?.catch?(onError)
+        else
+          callbackResult?.then?(onDone, onError)
       catch err
         done(err, null)
     err = response.error
