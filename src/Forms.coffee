@@ -5,6 +5,7 @@ Forms =
 
   defineModelForm: (formArgs) ->
     name = formArgs.name
+    formId = formArgs.id ? name
     Form = Template[name]
     unless name
       throw new Error 'No name provided for form'
@@ -101,7 +102,7 @@ Forms =
 
     Form.addHooks = ->
       if arguments.length == 1
-        formId = name
+        formId = formId
         hooks = arguments[0]
       else if arguments.length == 2
         formId = arguments[0]
@@ -132,7 +133,7 @@ Forms =
             _.each modifier.$set, (value, key) -> delete modifier.$unset[key]
           delete modifier.$set._id
           modifier
-      AutoForm.addHooks formId, hooks
+      AutoForm.addHooks formId, hooks, true
 
     Setter.merge hooks, formArgs.hooks
     Form.addHooks(hooks)
