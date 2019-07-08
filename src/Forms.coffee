@@ -462,6 +462,9 @@ Forms =
       template = getTemplate(template)
       docs = Form.parseDocs(template)
       template.docs ?= new ReactiveVar({})
+      collection = Form.getCollection()
+      return unless collection?
+      
       template.docs.set(docs)
       updateDataDocs(template)
       if Form.isReactive() then Form.setUpReactivity(template)
@@ -478,6 +481,10 @@ Forms =
       updateDataDocs(template)
 
     Form.parseDocs = (template) ->
+      parsedDocs = {}
+      collection = Form.getCollection()
+      return parsedDocs unless collection
+      
       template = getTemplate(template)
       data = template.data ? {}
       if template.docs?
@@ -488,11 +495,10 @@ Forms =
         docs = [data.doc]
       else
         docs = []
-      parsedDocs = {}
       _.each docs, (doc) ->
         if Types.isString(doc)
           docId = doc
-          doc = Form.getCollection().findOne(_id: docId)
+          doc = collection.findOne(_id: docId)
         else
           docId = doc._id
         parsedDocs[docId] = doc
