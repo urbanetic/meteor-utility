@@ -462,8 +462,6 @@ Forms =
       template = getTemplate(template)
       docs = Form.parseDocs(template)
       template.docs ?= new ReactiveVar({})
-      collection = Form.getCollection()
-      return unless collection?
       
       template.docs.set(docs)
       updateDataDocs(template)
@@ -483,12 +481,14 @@ Forms =
     Form.parseDocs = (template) ->
       parsedDocs = {}
       collection = Form.getCollection()
-      return parsedDocs unless collection
       
       template = getTemplate(template)
       data = template.data ? {}
       if template.docs?
-        docs = _.keys(template.docs.get())
+        if collection?
+          docs = _.keys(template.docs.get())
+        else
+          docs = _.values(template.docs.get())
       else if data.docs?
         docs = data.docs
       else if data.doc?
@@ -498,6 +498,7 @@ Forms =
       _.each docs, (doc) ->
         if Types.isString(doc)
           docId = doc
+          unless collection? then throw new Error('Collection not defined when using doc IDs')
           doc = collection.findOne(_id: docId)
         else
           docId = doc._id
