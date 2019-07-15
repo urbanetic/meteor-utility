@@ -7,6 +7,7 @@ Forms =
     name = formArgs.name
     formId = formArgs.id ? name
     Form = Template[name]
+    Form.args = formArgs
     unless name
       throw new Error 'No name provided for form'
     unless Form
@@ -18,7 +19,7 @@ Forms =
     # HOOKS
     ################################################################################################
 
-    hooks =
+    Form.defaultHooks =
       # Settings should be passed to the autoForm helper to ensure they are available in these
       # callbacks.
       onSubmit: (insertDoc, updateDoc, currentDoc) ->
@@ -102,10 +103,10 @@ Forms =
 
     Form.addHooks = ->
       if arguments.length == 1
-        formId = formId
+        _formId = formId
         hooks = arguments[0]
       else if arguments.length == 2
-        formId = arguments[0]
+        _formId = arguments[0]
         hooks = arguments[1]
       else
         throw new Error('Invalid arguments')
@@ -133,10 +134,11 @@ Forms =
             _.each modifier.$set, (value, key) -> delete modifier.$unset[key]
           delete modifier.$set._id
           modifier
-      AutoForm.addHooks formId, hooks, true
+      AutoForm.addHooks _formId, hooks, true
 
-    Setter.merge hooks, formArgs.hooks
-    Form.addHooks(hooks)
+    if typeof formId == 'string'
+      hooks = Setter.merge {}, Form.defaultHooks, formArgs.hooks
+      Form.addHooks(hooks)
 
     ################################################################################################
     # HELPERS
@@ -462,7 +464,6 @@ Forms =
       template = getTemplate(template)
       docs = Form.parseDocs(template)
       template.docs ?= new ReactiveVar({})
-      
       template.docs.set(docs)
       updateDataDocs(template)
       if Form.isReactive() then Form.setUpReactivity(template)
