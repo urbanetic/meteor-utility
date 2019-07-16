@@ -133,7 +133,8 @@ Forms =
           if modifier.$unset
             _.each modifier.$set, (value, key) -> delete modifier.$unset[key]
           delete modifier.$set._id
-          modifier
+          hooks.postFormToModifier?(modifier)
+          return modifier
       AutoForm.addHooks _formId, hooks, true
 
     if typeof formId == 'string'
