@@ -32,7 +32,9 @@ Forms =
         return false if Q.isPending(Form.whenLoaded(template))
 
         result = tryCallback => onSubmit?.apply(@, args)
-        return false if isError(result)
+        if isError(result)
+          @done(result)
+          return false
         deferCallback result, => template.settings.onSubmit?.apply(@, args)
         # Perform logic for submitting bulk forms.
         if Form.isBulk(template)
