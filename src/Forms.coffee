@@ -634,7 +634,7 @@ Forms =
           singular = Strings.singular(collectionName)
         else
           return null
-      singular.toLowerCase()
+      Strings.toTitleCaseFromCamel(singular)
 
     Form.whenLoaded = (template) -> getTemplate(template).loadDf.promise
 
