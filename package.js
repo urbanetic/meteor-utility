@@ -1,7 +1,7 @@
 Package.describe({
   name: 'urbanetic:utility',
   summary: 'A collection of utility modules',
-  version: '2.0.1',
+  version: '2.1.0',
   git: 'https://github.com/urbanetic/meteor-utility.git'
 });
 
@@ -30,7 +30,7 @@ Package.onUse(function(api) {
     'aldeed:autoform@5.8.1',
     'momentjs:moment@2.10.3',
     'matb33:collection-hooks@0.8.0',
-    'semantic:ui-css@2.1.2',
+    'aramk:semantic-ui@2.4.1_1',
     'session@1.1.0',
     'reactive-var@1.0.5',
     'tracker@1.0.5'
