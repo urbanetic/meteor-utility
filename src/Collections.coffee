@@ -306,7 +306,10 @@ Collections =
     if _.keys(modifier).length > 1 && !modifier.$set? && !modifier.$unset?
       throw new Error('Unexpected keys in modifier.')
     tmpCollection = @createTemporary()
+    # Ensure we handle ObjectId() after the clone.
+    existingId = doc._id
     doc = Setter.clone(doc)
+    if existingId? then doc._id = existingId
     # This is synchronous since it's a local collection.
     insertedId = tmpCollection.insert(doc)
     selector ?= {_id: insertedId}
