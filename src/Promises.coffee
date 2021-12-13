@@ -51,3 +51,16 @@ Promises =
   toCallback: (df) ->
     unless Q.isPromise(df?.promise) then throw new Error('Must provide Deferred promise')
     (err, result) -> if err then df.reject(err) else df.resolve(result)
+
+  until: (predicate, delay = 300) ->
+    df = Q.defer()
+    timer = setInterval ->
+      try
+        if predicate()
+          clearInterval(timer)
+          df.resolve()
+      catch err
+        clearInterval(timer)
+        df.reject(err)
+    , delay
+    df.promise
