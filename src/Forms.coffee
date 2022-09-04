@@ -83,6 +83,7 @@ Forms =
           modifier
 
       onError: (operation, error) ->
+        debugger
         args = arguments
         template = getTemplate(@template)
         settings = template.settings
@@ -94,11 +95,13 @@ Forms =
         settings.onError?.apply(@, args)
 
       beginSubmit: ->
+        debugger
         template = getTemplate(@template)
         template.isSubmitting.set(true) unless formArgs.reactiveSubmittingVar == false
         Form.setSubmitButtonDisabled(true, template)
 
       endSubmit: ->
+        debugger
         template = getTemplate(@template)
         template.isSubmitting.set(false) unless formArgs.reactiveSubmittingVar == false
         Form.setSubmitButtonDisabled(false, template)

@@ -1,7 +1,7 @@
 Package.describe({
   name: 'urbanetic:utility',
   summary: 'A collection of utility modules',
-  version: '2.1.0',
+  version: '3.0.0',
   git: 'https://github.com/urbanetic/meteor-utility.git'
 });
 
@@ -22,14 +22,14 @@ Package.onUse(function(api) {
   api.use([
     'deps',
     'jquery',
-    'less',
+    'less@4.0.0',
     'templating@1.3.2'
   ], 'client');
 
   api.use([
-    'aldeed:autoform@5.8.1',
+    'aldeed:autoform@7.0.0',
     'momentjs:moment@2.10.3',
-    'matb33:collection-hooks@0.8.0',
+    'matb33:collection-hooks@1.1.2',
     'aramk:semantic-ui@2.4.1_1',
     'session@1.1.0',
     'reactive-var@1.0.5',
@@ -43,7 +43,7 @@ Package.onUse(function(api) {
   ], 'server', {weak: true});
   api.use([
     'aldeed:simple-schema@1.5.3',
-    'aldeed:collection2@2.3.3'
+    'aldeed:collection2@3.5.0'
   ], ['client', 'server']);
   // Make these available to the app to allow working with tiem and deferreds.
   api.imply(['momentjs:moment', 'aramk:q'], ['client','server'])
